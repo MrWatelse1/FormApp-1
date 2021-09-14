@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Web.Mvc;
 
 namespace FormApplication.Data
 {
@@ -147,12 +148,52 @@ namespace FormApplication.Data
         int newID = command.ExecuteNonQuery();
         return newID;
     }
+        public int CreateOccupants(FormCollection formCollection)
+        {
+            string id = "-1";
+            string name = formCollection["Fullname"];
+            string gender = formCollection["Gender"];
+            string houseNumber = formCollection["HouseNumber"];
+            string email = formCollection["Email"];
+            string mobile = formCollection["Mobile"];
+            string profession = formCollection["Profession"];
+            string status = formCollection["Status"];
+
+            string sqlQuery = "";
+            // if fullmodel.id <= -1 then create
+            int mainId = int.Parse(id);
+            
+            if (mainId <= 0)
+            {
+                sqlQuery = "INSERT INTO dbo.FullForm Values(@Fullname, @Gender, @HouseNumber, @Email, @Mobile, @Profession, @Status)";
+            }
+            else
+            {
+                sqlQuery = "UPDATE dbo.FullForm SET Fullname = @Fullname,  Gender = @Gender, HouseNumber = @HouseNumber, Email = @Email, Mobile = @Mobile, Profession = @Profession, Status = @Status WHERE ID = @ID";
+            }
+            SqlCommand command = new SqlCommand(sqlQuery, this.Connection);
+
+            command.Parameters.Add("@ID", System.Data.SqlDbType.Int, 1000).Value = mainId;
+            command.Parameters.Add("@Fullname", System.Data.SqlDbType.VarChar, 1000).Value = name;
+            command.Parameters.Add("@Gender", System.Data.SqlDbType.Int, 1000).Value = gender;
+            command.Parameters.Add("@HouseNumber", System.Data.SqlDbType.Int, 1000).Value = houseNumber;
+            command.Parameters.Add("@Email", System.Data.SqlDbType.VarChar, 1000).Value = email;
+            command.Parameters.Add("@Mobile", System.Data.SqlDbType.VarChar, 1000).Value = mobile;
+            command.Parameters.Add("@Profession", System.Data.SqlDbType.VarChar, 1000).Value = profession;
+            command.Parameters.Add("@Status", System.Data.SqlDbType.Int, 1000).Value = status;
+
+            //connection.Open();
+            int newID = command.ExecuteNonQuery();
+            return newID;
+        }
 
     public int CreateSpouse(FormModel formModel)
     {
         int foreignKeey = QueryFk();
+
         string sqlQuery = "";
         // if fullmodel.id <= -1 then create
+
         if (formModel.SpouseId <= 0)
         {
             sqlQuery = "INSERT INTO dbo.Spouse Values(@FormId, @Names, @GenderType, @EmailAddress, @Number)";
@@ -174,6 +215,80 @@ namespace FormApplication.Data
         int newID = command.ExecuteNonQuery();
         return newID;
     }
+    
+    public int CreateSpouses(FormCollection formCollection)
+        {
+            int foreignKey = QueryFk();
+            string spouseID = formCollection["SpouseId"];
+            string names = formCollection["Names"];
+            string genders = formCollection["GenderType"];
+            string emailAdd = formCollection["EmailAddress"];
+            string number = formCollection["Number"];
+
+            var divSpouseId = spouseID.Split(',');
+            List<int> spouseIds = new List<int>();
+            foreach (string id in divSpouseId)
+            {
+                int individualSpouseId = int.Parse(id);
+                spouseIds.Add(individualSpouseId);
+            }
+
+            var divNames = names.Split(',');
+            List<string> Naming = new List<string>();
+            foreach (string spouseName in divNames)
+            {
+                Naming.Add(spouseName);
+            }
+
+            var divGenderTypes = genders.Split(',');
+            List<int> GenderTypes = new List<int>();
+            foreach (string spouseGender in divGenderTypes)
+            {
+                int spouseGenders = int.Parse(spouseGender);
+                GenderTypes.Add(spouseGenders);
+            }
+
+            var divEmails = emailAdd.Split(',');
+            List<string> Emails = new List<string>();
+            foreach (string spouseEmail in divEmails)
+            {
+                Emails.Add(spouseEmail);
+            }
+
+            var divNumber = number.Split(',');
+            List<string> Numbers = new List<string>();
+            foreach (string spouseNumbers in divNumber)
+            {
+                Numbers.Add(spouseNumbers);
+            }
+
+            string sqlQuery = "";
+            //if the spouseid <= -1 then create
+            int newID = 0;
+            for (int i =0; i < spouseIds.Count; i++)
+            {
+                if(spouseIds[i] <= 0)
+                {
+                    sqlQuery = "INSERT INTO dbo.Spouse Values(@FormId, @Names, @GenderType, @EmailAddress, @Number)";
+                }
+                else
+                {
+                    sqlQuery = "UPDATE dbo.Spouse SET FormId = @FormId, Names = @Names,  GenderType = @GenderType, EmailAddress = @EmailAddress, Number = @Number WHERE SpouseId = @SpouseId";
+                }
+                SqlCommand command = new SqlCommand(sqlQuery, this.Connection);
+                command.Parameters.Add("@SpouseId", System.Data.SqlDbType.Int, 1000).Value = spouseIds[i];
+                command.Parameters.Add("@FormId", System.Data.SqlDbType.Int, 1000).Value = foreignKey;
+                command.Parameters.Add("@Names", System.Data.SqlDbType.VarChar, 1000).Value = Naming[i];
+                command.Parameters.Add("@GenderType", System.Data.SqlDbType.Int, 1000).Value = GenderTypes[i];
+                command.Parameters.Add("@EmailAddress", System.Data.SqlDbType.VarChar, 1000).Value = Emails[i];
+                command.Parameters.Add("@Number", System.Data.SqlDbType.VarChar, 1000).Value = Numbers[i];
+
+                newID = command.ExecuteNonQuery();
+                
+            }
+            return newID;
+        }
+
     public int QueryFk()
     {
         int newKey = 0;

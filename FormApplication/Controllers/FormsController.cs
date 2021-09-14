@@ -2,6 +2,7 @@
 using FormApplication.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -105,16 +106,16 @@ namespace FormApplication.Controllers
             return View("Details", fullFormModel);
         }
         [HttpPost]
-        public ActionResult ProcessNewForm (FormModel formModel)
+        public ActionResult ProcessNewForm(FormCollection formCollection)
         {
             //save to the db
             using (FormDAO formDAO = new FormDAO())
             {
-                formDAO.CreateOccupant(formModel);
-                formDAO.CreateSpouse(formModel);
+                formDAO.CreateOccupants(formCollection);
+                formDAO.CreateSpouses(formCollection);
             }
 
-            return View("ProcessNewForm", formModel);
+            return View("ProcessNewForm");
         }
         public ActionResult ViewDetails() 
         {
@@ -127,3 +128,8 @@ namespace FormApplication.Controllers
         }
     }
 }
+
+
+//string spouse = "";
+////Request.Form[]
+//ViewData["Names"] = spouse;

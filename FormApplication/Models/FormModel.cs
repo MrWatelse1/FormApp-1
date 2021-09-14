@@ -48,7 +48,7 @@ namespace FormApplication.Models
             Mobile = "What's your number?";
             Profession = "What's your profession?";
             Status = "What's your status";
-            SpouseId = -1 ;
+            SpouseId = -1;
             FormId = -1;
             Names = "What's your name?";
             GenderType = "Gender";
