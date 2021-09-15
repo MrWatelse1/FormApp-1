@@ -21,6 +21,15 @@ namespace FormApplication.Controllers
             }
             return View("Index", fullFormModels);
         }
+        public ActionResult FormView()
+        {
+            List<OnlineModel> onlineModels = new List<OnlineModel>();
+            using(FormDAO formDAO = new FormDAO())
+            {
+                onlineModels = formDAO.FetchAllInfo();
+            }
+            return View("FormView", onlineModels);
+        }
         public ActionResult FormCreate()
         {
 
