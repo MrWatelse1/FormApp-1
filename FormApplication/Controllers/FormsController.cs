@@ -111,8 +111,15 @@ namespace FormApplication.Controllers
             //save to the db
             using (FormDAO formDAO = new FormDAO())
             {
-                formDAO.CreateOccupants(formCollection);
-                formDAO.CreateSpouses(formCollection);
+                if(formCollection.Count <= 8)
+                {
+                    formDAO.CreateOccupants(formCollection);
+                }
+                else
+                {
+                    formDAO.CreateOccupants(formCollection);
+                    formDAO.CreateSpouses(formCollection);
+                }
             }
 
             return View("ProcessNewForm");
