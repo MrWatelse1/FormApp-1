@@ -37,7 +37,8 @@
         <th>
             @Html.DisplayNameFor(model => model.Status)
         </th>
-        
+        <th style="text-align:center;">@Html.DisplayNameFor(model => model.SpouseModels)</th>
+
     </tr>
 
     @foreach (var item in Model)
@@ -45,41 +46,42 @@
         tenantCount++;
         var spouseCount = 0;
 
-<tr>
-    <td>@tenantCount</td>
-    <td>
-        @Html.DisplayFor(modelItem => item.Fullname)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.Gender)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.HouseNumber)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.Email)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.Mobile)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.Profession)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.Status)
-    </td>
     <tr>
-        
+        <td>@tenantCount</td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Fullname)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Gender)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.HouseNumber)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Email)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Mobile)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Profession)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Status)
+        </td>
+
+    
+
         <td>
             @if (item.SpouseModels == null || item.SpouseModels.Count() == 0)
-            {
+                {
 
-                <span hidden>No Spouse</span>
-            }
-            else
-            {
-        <table class="table">
-            <th>@Html.DisplayNameFor(model => model.SpouseModels)</th>
+            <span hidden>No Spouse</span>
+                }
+                else
+                {
+            <table class="table">
+                
                 <tr>
                     <th>S/N</th>
                     <th>Name</th>
@@ -88,9 +90,9 @@
                     <th>Number</th>
                 </tr>
 
-            @foreach (var spouse in item.SpouseModels)
-            {
-                spouseCount++;
+                @foreach (var spouse in item.SpouseModels)
+                {
+                    spouseCount++;
 
                 <tr>
                     <td>@spouseCount</td>
@@ -100,18 +102,17 @@
                     <td>@spouse.Number</td>
                 </tr>
 
-            }
-        </table>
-            }
+                }
+            </table>
+                }
         </td>
-        
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
+            @Html.ActionLink("Details", "Details", new { id = item.ID }) |
+            @Html.ActionLink("Delete", "Delete", new { id = item.ID })
+        </td>
     </tr>
-    <td>
-        @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
-        @Html.ActionLink("Details", "Details", new { id = item.ID }) |
-        @Html.ActionLink("Delete", "Delete", new { id = item.ID })
-    </td>
-</tr>
+
     }
 
 </table>
