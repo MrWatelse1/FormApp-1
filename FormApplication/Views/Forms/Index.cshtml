@@ -6,7 +6,7 @@
     var tenantCount = 0;
 }
 
-<h2>Index</h2>
+<h2>All Occupants</h2>
 
 <p>
     @Html.ActionLink("Create New", "Create")
@@ -21,7 +21,6 @@
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Gender)
-        <th>@Html.DisplayNameFor(model => model.SpouseModels)</th>
         </th>
         <th>
             @Html.DisplayNameFor(model => model.HouseNumber)
@@ -38,7 +37,7 @@
         <th>
             @Html.DisplayNameFor(model => model.Status)
         </th>
-
+        
     </tr>
 
     @foreach (var item in Model)
@@ -46,70 +45,73 @@
         tenantCount++;
         var spouseCount = 0;
 
-        <tr>
-            <td>@tenantCount</td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Fullname)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Gender)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.HouseNumber)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Mobile)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Profession)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
+<tr>
+    <td>@tenantCount</td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Fullname)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Gender)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.HouseNumber)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Email)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Mobile)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Profession)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Status)
+    </td>
+    <tr>
+        
+        <td>
+            @if (item.SpouseModels == null || item.SpouseModels.Count() == 0)
+            {
 
-            <td>
-                @if (item.SpouseModels == null || item.SpouseModels.Count() == 0)
-                {
+                <span hidden>No Spouse</span>
+            }
+            else
+            {
+        <table class="table">
+            <th colspan="1">@Html.DisplayNameFor(model => model.SpouseModels)</th>
+                <tr>
+                    <th>S/N</th>
+                    <th>Name</th>
+                    <th>Gender</th>
+                    <th>Email Address</th>
+                    <th>Number</th>
+                </tr>
 
-                    <span>No Spouse</span>
-                }
-                else
-                {
-                    <table>
-                        <tr>
-                            <th>S/N</th>
-                            <th>Name</th>
-                            <th>Gender Type</th>
-                            <th>Email Address</th>
-                            <th>Number</th>
-                        </tr>
+            @foreach (var spouse in item.SpouseModels)
+            {
+                spouseCount++;
 
-                        @foreach (var spouse in item.SpouseModels)
-                        {
-                            spouseCount++;
+                <tr>
+                    <td>@spouseCount</td>
+                    <td>@spouse.Names</td>
+                    <td>@spouse.Gender</td>
+                    <td>@spouse.Email</td>
+                    <td>@spouse.Number</td>
+                </tr>
 
-                            <tr>
-                                <td>@spouseCount</td>
-                                <td>@spouse.Names</td>
-                                <td>@spouse.Gender</td>
-                                <td>@spouse.Email</td>
-                                <td>@spouse.Number</td>
-                            </tr>
-
-                        }
-                    </table>
-                }
-            </td>
-
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
-                @Html.ActionLink("Details", "Details", new { id = item.ID }) |
-                @Html.ActionLink("Delete", "Delete", new { id = item.ID })
-            </td>
-        </tr>
+            }
+        </table>
+            }
+        </td>
+        
+    </tr>
+    <td>
+        @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
+        @Html.ActionLink("Details", "Details", new { id = item.ID }) |
+        @Html.ActionLink("Delete", "Delete", new { id = item.ID })
+    </td>
+</tr>
     }
 
 </table>
