@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
 
 namespace FormApplication.Models
 {
@@ -15,7 +12,8 @@ namespace FormApplication.Models
         public string Gender { get; set; }
         [Required]
         public string HouseNumber { get; set; }
-        [Required][EmailAddress]
+        [Required]
+        [EmailAddress]
         public string Email { get; set; }
         [Required]
         public string Mobile { get; set; }
@@ -24,6 +22,8 @@ namespace FormApplication.Models
         [Required]
         public string Status { get; set; }
 
+        [Display(Name ="Spouse(s)")]
+        public List<SpouseModel> SpouseModels { get; set; }
         public FullFormModel()
         {
             ID = -1;

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Web.Mvc;
+using System.Linq;
 
 namespace FormApplication.Data
 {
@@ -45,8 +46,35 @@ namespace FormApplication.Data
 
                 returnList.Add(form);
             }
-        }
-            reader.Close();
+                reader.Close();
+                string sqlQuery2 = "select s.FormId,s.Names, g.GenderType,s.EmailAddress, s.Number from dbo.Spouse as s join dbo.Gender as g on s.GenderType = g.GenderId";
+
+                SqlCommand command2 = new SqlCommand(sqlQuery2, this.Connection);
+                //connection.Open();
+                SqlDataReader reader2 = command2.ExecuteReader();
+                List<SpouseModel> spouseModels = new List<SpouseModel>();
+                if (reader2.HasRows)
+                {
+                    while (reader2.Read())
+                    {
+                        SpouseModel spouse =new SpouseModel();
+                        spouse.FormId = reader2.GetInt32(0);
+                        spouse.Names = reader2.GetString(1);
+                        spouse.Gender = reader2.GetString(2);
+                        spouse.Email = reader2.GetString(3);
+                        spouse.Number = reader2.GetString(4);
+
+                        spouseModels.Add(spouse);
+                    }
+                }
+                foreach (var tenant in returnList)
+                {
+                    tenant.SpouseModels = spouseModels.Where(s => s.FormId == tenant.ID).ToList();
+                }
+
+
+            }
+            //reader.Close();
             return returnList;
     }
     public FullFormModel FetchOne(int id)
@@ -147,7 +175,7 @@ namespace FormApplication.Data
         //connection.Open();
         int newID = command.ExecuteNonQuery();
         return newID;
-    }
+    }//not in use
         public int CreateOccupants(FormCollection formCollection)
         {
             string id = "-1";
@@ -214,7 +242,7 @@ namespace FormApplication.Data
         //connection.Open();
         int newID = command.ExecuteNonQuery();
         return newID;
-    }
+    }//not using this one
     
     public int CreateSpouses(FormCollection formCollection)
         {
@@ -307,7 +335,7 @@ namespace FormApplication.Data
         }
         reader.Close();
         return newKey;
-    }
+    }//get the auto generated id of the occupants and send the id to be used in the spouse table
     public List<StatutoryModel> AccessStatusList()
     {
         List<StatutoryModel> returnstatuses = new List<StatutoryModel>();
@@ -441,7 +469,7 @@ namespace FormApplication.Data
         }
             reader.Close();
             return returnList;
-    }
+    }// not in use
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)

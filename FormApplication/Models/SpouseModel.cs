@@ -7,6 +7,11 @@ namespace FormApplication.Models
 {
     public class SpouseModel
     {
-
+        
+        public int FormId { get; set; }
+        public string Names { get; set; }
+        public string Gender { get; set; }
+        public string Email { get; set; }
+        public string Number { get; set; }
     }
 }
