@@ -77,6 +77,46 @@ namespace FormApplication.Data
             //reader.Close();
             return returnList;
     }
+    public List<OnlineModel> FetchAllInfo()
+        {
+            List<OnlineModel> returnList = new List<OnlineModel>();
+            string sqlQuery = "select f.fullname, g.GenderType, h.HouseUnit, f.email, f.mobile, f.profession, s.StatusType, sp.names,ge.GenderType, sp.emailaddress, sp.number from FullForm AS f join gender as g on f.Gender = g.GenderId join Housing h on f.HouseNumber = h.HouseId join Statutory s on f.Status = s.StatusId left join Spouse as sp on f.ID = sp.FormId left join gender as ge on ge.GenderId = sp.GenderType";
+            //open connection to the database
+            SqlCommand command = new SqlCommand(sqlQuery, this.Connection);
+            //start reading
+            SqlDataReader reader = command.ExecuteReader();
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    try
+                    {
+
+                        OnlineModel online = new OnlineModel();
+                        online.Fullname = reader.GetString(0);
+                        online.Gender = reader.GetString(1);
+                        online.HouseUnit = reader.GetString(2);
+                        online.Email = reader.GetString(3);
+                        online.Mobile = reader.GetString(4);
+                        online.Profession = reader.GetString(5);
+                        online.StatusType = reader.GetString(6);
+                        online.SpouseName = reader.GetString(7);
+                        online.GenderType = reader.GetString(8);
+                        online.EmailAddress = reader.GetString(9);
+                        online.Number = reader.GetString(10);
+
+                        returnList.Add(online);
+                    }
+                    catch
+                    {
+
+                    }
+                }
+            }
+            reader.Close();
+            return returnList;
+
+        }
     public FullFormModel FetchOne(int id)
     {
         string sqlQuery = "SELECT F.ID, F.Fullname, G.GenderType, H.HouseUnit, F.Email, F.Mobile, F.Profession, S.StatusType from dbo.FullForm as F join dbo.Gender as G ON F.Gender = G.GenderId join dbo.Housing as H ON F.HouseNumber = H.HouseId join dbo.Statutory as S ON F.Status = S.StatusId WHERE Id =@id";
