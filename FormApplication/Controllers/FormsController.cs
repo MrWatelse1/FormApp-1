@@ -124,15 +124,15 @@ namespace FormApplication.Controllers
 
             return View("ProcessNewForm");
         }
-        public ActionResult ViewDetails() 
-        {
-            List<FormModel> form = new List<FormModel>();
-            using (FormDAO formDAO = new FormDAO())
-            {
-                form = formDAO.AccessFormView();
-            }
-            return View("ViewDetails", form);
-        }
+        //public ActionResult ViewDetails() 
+        //{
+        //    List<FormModel> form = new List<FormModel>();
+        //    using (FormDAO formDAO = new FormDAO())
+        //    {
+        //        form = formDAO.AccessFormView();
+        //    }
+        //    return View("ViewDetails", form);
+        //}
     }
 }
 

@@ -21,7 +21,6 @@
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Gender)
-        <th>@Html.DisplayNameFor(model => model.SpouseModels)</th>
         </th>
         <th>
             @Html.DisplayNameFor(model => model.HouseNumber)
@@ -50,6 +49,42 @@
             <td>@tenantCount</td>
             <td>
                 @Html.DisplayFor(modelItem => item.Fullname)
+                <table>
+                    <th>@Html.DisplayNameFor(model => model.SpouseModels)</th>
+                    <td>
+                        @if (item.SpouseModels == null || item.SpouseModels.Count() == 0)
+                        {
+
+                            <span>No Spouse</span>
+                        }
+                        else
+                        {
+                            <table>
+                                <tr>
+                                    <th>S/N</th>
+                                    <th>Name</th>
+                                    <th>Gender Type</th>
+                                    <th>Email Address</th>
+                                    <th>Number</th>
+                                </tr>
+
+                                @foreach (var spouse in item.SpouseModels)
+                                {
+                                    spouseCount++;
+
+                                    <tr>
+                                        <td>@spouseCount</td>
+                                        <td>@spouse.Names</td>
+                                        <td>@spouse.Gender</td>
+                                        <td>@spouse.Email</td>
+                                        <td>@spouse.Number</td>
+                                    </tr>
+
+                                }
+                            </table>
+                        }
+                    </td>
+                </table>
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Gender)
@@ -70,7 +105,7 @@
                 @Html.DisplayFor(modelItem => item.Status)
             </td>
 
-            <td>
+            @*<td>
                 @if (item.SpouseModels == null || item.SpouseModels.Count() == 0)
                 {
 
@@ -102,7 +137,7 @@
                         }
                     </table>
                 }
-            </td>
+            </td>*@
 
             <td>
                 @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |

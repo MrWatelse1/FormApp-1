@@ -149,33 +149,6 @@ namespace FormApplication.Data
 
         return newID;
     }
-    public int CreateOccupant(FormModel formModel)
-    {
-        string sqlQuery = "";
-        // if fullmodel.id <= -1 then create
-        if (formModel.ID <= 0)
-        {
-            sqlQuery = "INSERT INTO dbo.FullForm Values(@Fullname, @Gender, @HouseNumber, @Email, @Mobile, @Profession, @Status)";
-        }
-        else
-        {
-            sqlQuery = "UPDATE dbo.FullForm SET Fullname = @Fullname,  Gender = @Gender, HouseNumber = @HouseNumber, Email = @Email, Mobile = @Mobile, Profession = @Profession, Status = @Status WHERE ID = @ID";
-        }
-        SqlCommand command = new SqlCommand(sqlQuery, this.Connection);
-
-        command.Parameters.Add("@ID", System.Data.SqlDbType.Int, 1000).Value = formModel.ID;
-        command.Parameters.Add("@Fullname", System.Data.SqlDbType.VarChar, 1000).Value = formModel.Fullname;
-        command.Parameters.Add("@Gender", System.Data.SqlDbType.Int, 1000).Value = formModel.Gender;
-        command.Parameters.Add("@HouseNumber", System.Data.SqlDbType.Int, 1000).Value = formModel.HouseNumber;
-        command.Parameters.Add("@Email", System.Data.SqlDbType.VarChar, 1000).Value = formModel.Email;
-        command.Parameters.Add("@Mobile", System.Data.SqlDbType.VarChar, 1000).Value = formModel.Mobile;
-        command.Parameters.Add("@Profession", System.Data.SqlDbType.VarChar, 1000).Value = formModel.Profession;
-        command.Parameters.Add("@Status", System.Data.SqlDbType.Int, 1000).Value = formModel.Status;
-
-        //connection.Open();
-        int newID = command.ExecuteNonQuery();
-        return newID;
-    }//not in use
         public int CreateOccupants(FormCollection formCollection)
         {
             string id = "-1";
@@ -215,34 +188,6 @@ namespace FormApplication.Data
             return newID;
         }
 
-    public int CreateSpouse(FormModel formModel)
-    {
-        int foreignKeey = QueryFk();
-
-        string sqlQuery = "";
-        // if fullmodel.id <= -1 then create
-
-        if (formModel.SpouseId <= 0)
-        {
-            sqlQuery = "INSERT INTO dbo.Spouse Values(@FormId, @Names, @GenderType, @EmailAddress, @Number)";
-        }
-        else
-        {
-            sqlQuery = "UPDATE dbo.Spouse SET FormId = @FormId, Names = @Names,  GenderType = @GenderType, EmailAddress = @EmailAddress, Number = @Number WHERE SpouseId = @SpouseId";
-        }
-        SqlCommand command = new SqlCommand(sqlQuery, this.Connection);
-
-        command.Parameters.Add("@SpouseId", System.Data.SqlDbType.Int, 1000).Value = formModel.SpouseId;
-        command.Parameters.Add("@FormId", System.Data.SqlDbType.Int, 1000).Value = foreignKeey;
-        command.Parameters.Add("@Names", System.Data.SqlDbType.VarChar, 1000).Value = formModel.Names;
-        command.Parameters.Add("@GenderType", System.Data.SqlDbType.Int, 1000).Value = formModel.GenderType;
-        command.Parameters.Add("@EmailAddress", System.Data.SqlDbType.VarChar, 1000).Value = formModel.EmailAddress;
-        command.Parameters.Add("@Number", System.Data.SqlDbType.VarChar, 1000).Value = formModel.Number;
-
-        //connection.Open();
-        int newID = command.ExecuteNonQuery();
-        return newID;
-    }//not using this one
     
     public int CreateSpouses(FormCollection formCollection)
         {
@@ -435,41 +380,6 @@ namespace FormApplication.Data
             reader.Close();
             return returnGender;
     }
-
-    public List<FormModel> AccessFormView()
-    {
-        List<FormModel> returnList = new List<FormModel>();
-
-        string sqlQuery = "SELECT F.*,S.Names,S.GenderType,S.EmailAddress,S.Number FROM dbo.FullForm as F JOIN dbo.Spouse as S ON F.ID = S.SpouseId;";
-        SqlCommand command = new SqlCommand(sqlQuery, this.Connection);
-        SqlDataReader reader = command.ExecuteReader();
-
-        if (reader.HasRows)
-        {
-            while (reader.Read())
-            {
-                FormModel formModel = new FormModel();
-                formModel.ID = reader.GetInt32(0);
-                formModel.Fullname = reader.GetString(1);
-                formModel.Gender = reader.GetString(2);
-                formModel.HouseNumber = reader.GetString(3);
-                formModel.Email = reader.GetString(4);
-                formModel.Mobile = reader.GetString(5);
-                formModel.Profession = reader.GetString(6);
-                formModel.Status = reader.GetString(7);
-                //formModel.SpouseId = reader.GetInt32(8);
-                //formModel.FormId = reader.GetInt32(9);
-                formModel.Names = reader.GetString(10);
-                formModel.GenderType = reader.GetString(11);
-                formModel.EmailAddress = reader.GetString(12);
-                formModel.Number = reader.GetString(13);
-
-                returnList.Add(formModel);
-            }
-        }
-            reader.Close();
-            return returnList;
-    }// not in use
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
