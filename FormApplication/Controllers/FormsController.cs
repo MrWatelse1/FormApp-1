@@ -40,20 +40,21 @@ namespace FormApplication.Controllers
         }
         public ActionResult Details(int id)
         {
-            FullFormModel fullFormModel = new FullFormModel();
+            List<OnlineModel> online = new List<OnlineModel>();
             using (FormDAO formDAO = new FormDAO())
             {
-                fullFormModel = formDAO.FetchOne(id);
+                online = formDAO.EditDetails(id);
             }
-            return View("Details", fullFormModel);
+            return View("Details", online);
            
         }
         public ActionResult Edit(int id)
         {
+
             List<StatutoryModel> statuses = new List<StatutoryModel>();
             List<GenderModel> gender = new List<GenderModel>();
             List<HousingModel> houses = new List<HousingModel>();
-            FullFormModel fullFormModel = new FullFormModel();
+            FullFormModel onlineModel = new FullFormModel();
             using (FormDAO formDAO = new FormDAO())
             {
                 statuses = formDAO.AccessStatusList();
@@ -62,10 +63,10 @@ namespace FormApplication.Controllers
                 ViewBag.housebatch = houses;
                 ViewBag.status = statuses;
                 ViewBag.gender = gender;
-                fullFormModel = formDAO.FetchOne(id);
+
+                onlineModel = formDAO.FetchOne(id);
             }
-            return View("OnlineForm", fullFormModel);
-            
+            return View("OccupantView", onlineModel);
         }
         public ActionResult Create()
         {
@@ -95,16 +96,16 @@ namespace FormApplication.Controllers
             }
             return View("Index", form);
         }
-        [HttpPost]
-        public ActionResult ProcessCreate (FullFormModel fullFormModel)
-        {
-            //save to the db
-            using (FormDAO formDAO = new FormDAO())
-            {
-                formDAO.CreateOrUpdate(fullFormModel);
-            }
-            return View("Details", fullFormModel);
-        }
+        //[HttpPost]
+        //public ActionResult ProcessCreate (FullFormModel fullFormModel)
+        //{
+        //    //save to the db
+        //    using (FormDAO formDAO = new FormDAO())
+        //    {
+        //        formDAO.CreateOrUpdate(fullFormModel);
+        //    }
+        //    return View("Details", fullFormModel);
+        //}
         [HttpPost]
         public ActionResult ProcessNewForm(FormCollection formCollection)
         {
@@ -124,15 +125,16 @@ namespace FormApplication.Controllers
 
             return View("ProcessNewForm");
         }
-        //public ActionResult ViewDetails() 
-        //{
-        //    List<FormModel> form = new List<FormModel>();
-        //    using (FormDAO formDAO = new FormDAO())
-        //    {
-        //        form = formDAO.AccessFormView();
-        //    }
-        //    return View("ViewDetails", form);
-        //}
+        [HttpPost]
+        public ActionResult SaveOccupantEdit(FullFormModel fullFormModel)
+        {
+            //save to db
+            using (FormDAO formDAO = new FormDAO())
+            {
+                formDAO.UpdateOccupant(fullFormModel);
+            }
+            return View("ViewOccupantChanges", fullFormModel);
+        }
     }
 }
 

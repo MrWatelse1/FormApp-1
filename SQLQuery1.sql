@@ -1,0 +1,2 @@
+﻿select f.fullname, g.GenderType, h.HouseUnit, f.email, f.mobile, f.profession, s.StatusType, sp.names,ge.GenderType, sp.emailaddress, sp.number from FullForm AS f join gender as g on f.Gender = g.GenderId join Housing h on f.HouseNumber = h.HouseId join Statutory s on 
+f.Status = s.StatusId left join Spouse as sp on f.ID = sp.FormId left join gender as ge on ge.GenderId =sp.GenderType ORDER BY ge.GenderType Desc; 
