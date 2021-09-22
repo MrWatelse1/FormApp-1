@@ -436,40 +436,6 @@ namespace FormApplication.Data
             return returnGender;
     }
 
-    public List<FormModel> AccessFormView()
-    {
-        List<FormModel> returnList = new List<FormModel>();
-
-        string sqlQuery = "SELECT F.*,S.Names,S.GenderType,S.EmailAddress,S.Number FROM dbo.FullForm as F JOIN dbo.Spouse as S ON F.ID = S.SpouseId;";
-        SqlCommand command = new SqlCommand(sqlQuery, this.Connection);
-        SqlDataReader reader = command.ExecuteReader();
-
-        if (reader.HasRows)
-        {
-            while (reader.Read())
-            {
-                FormModel formModel = new FormModel();
-                formModel.ID = reader.GetInt32(0);
-                formModel.Fullname = reader.GetString(1);
-                formModel.Gender = reader.GetString(2);
-                formModel.HouseNumber = reader.GetString(3);
-                formModel.Email = reader.GetString(4);
-                formModel.Mobile = reader.GetString(5);
-                formModel.Profession = reader.GetString(6);
-                formModel.Status = reader.GetString(7);
-                //formModel.SpouseId = reader.GetInt32(8);
-                //formModel.FormId = reader.GetInt32(9);
-                formModel.Names = reader.GetString(10);
-                formModel.GenderType = reader.GetString(11);
-                formModel.EmailAddress = reader.GetString(12);
-                formModel.Number = reader.GetString(13);
-
-                returnList.Add(formModel);
-            }
-        }
-            reader.Close();
-            return returnList;
-    }// not in use
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
