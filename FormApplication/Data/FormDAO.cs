@@ -15,7 +15,7 @@ namespace FormApplication.Data
             this.Connection = new SqlConnection(connectionString);
             this.Connection.Open();
         }
-        private string connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=FormApp;
+        private readonly string connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=FormApp;
                                             Integrated Security=True;Connect Timeout=30;Encrypt=False;
                                             TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
         private bool disposedValue;
@@ -34,16 +34,16 @@ namespace FormApplication.Data
             while (reader.Read())
             {
                 //create a new gadget object. Add it to the list to return.
-                FullFormModel form = new FullFormModel();
-                form.ID = reader.GetInt32(reader.GetOrdinal("ID"));
-                form.Fullname = reader.GetString(reader.GetOrdinal("Fullname"));
-                form.Gender = reader.GetString(reader.GetOrdinal("GenderType"));
-                form.HouseNumber = reader.GetString(reader.GetOrdinal("HouseUnit"));
-                form.Email = reader.GetString(reader.GetOrdinal("Email"));
-                form.Mobile = reader.GetString(reader.GetOrdinal("Mobile"));
-                form.Profession = reader.GetString(reader.GetOrdinal("Profession"));
-                form.Status = reader.GetString(reader.GetOrdinal("StatusType"));
-
+                FullFormModel form = new FullFormModel() { 
+                    ID = reader.GetInt32(reader.GetOrdinal("ID")),
+                    Fullname = reader.GetString(reader.GetOrdinal("Fullname")),
+                    Gender = reader.GetString(reader.GetOrdinal("GenderType")),
+                    HouseNumber = reader.GetString(reader.GetOrdinal("HouseUnit")),
+                    Email = reader.GetString(reader.GetOrdinal("Email")),
+                    Mobile = reader.GetString(reader.GetOrdinal("Mobile")),
+                    Profession = reader.GetString(reader.GetOrdinal("Profession")),
+                    Status = reader.GetString(reader.GetOrdinal("StatusType"))
+                };
                 returnList.Add(form);
             }
                 reader.Close();
@@ -57,13 +57,13 @@ namespace FormApplication.Data
                 {
                     while (reader2.Read())
                     {
-                        SpouseModel spouse =new SpouseModel();
-                        spouse.FormId = reader2.GetInt32(reader2.GetOrdinal("FormId"));
-                        spouse.Names = reader2.GetString(reader2.GetOrdinal("Names"));
-                        spouse.Gender = reader2.GetString(reader2.GetOrdinal("GenderType"));
-                        spouse.Email = reader2.GetString(reader2.GetOrdinal("EmailAddress"));
-                        spouse.Number = reader2.GetString(reader2.GetOrdinal("Number"));
-
+                        SpouseModel spouse =new SpouseModel() {
+                            FormId = reader2.GetInt32(reader2.GetOrdinal("FormId")),
+                            Names = reader2.GetString(reader2.GetOrdinal("Names")),
+                            GenderType = reader2.GetString(reader2.GetOrdinal("GenderType")),
+                            EmailAddress = reader2.GetString(reader2.GetOrdinal("EmailAddress")),
+                            Number = reader2.GetString(reader2.GetOrdinal("Number"))
+                        };
                         spouseModels.Add(spouse);
                     }
                 }
@@ -96,59 +96,59 @@ namespace FormApplication.Data
                 while (reader.Read() && reader.IsDBNull(reader.GetOrdinal("Fullname")))
                 {
                     //create a new object, Add it to the list to return.
-                    OnlineModel form = new OnlineModel();
-
-                    form.Fullname = reader.GetFieldValue<string>(reader.GetOrdinal("Fullname"));
-                    form.Gender = reader.GetString(reader.GetOrdinal("GenderType"));
-                    form.HouseUnit = reader.GetFieldValue<string>(reader.GetOrdinal("HouseUnit"));
-                    form.Email = reader.GetFieldValue<string>(reader.GetOrdinal("Email"));
-                    form.Mobile = reader.GetFieldValue<string>(reader.GetOrdinal("Mobile"));
-                    form.Profession = reader.GetFieldValue<string>(reader.GetOrdinal("Profession"));
-                    form.StatusType = reader.GetFieldValue<string>(reader.GetOrdinal("StatusType"));
-
+                    OnlineModel form = new OnlineModel() {
+                        Fullname = reader.GetFieldValue<string>(reader.GetOrdinal("Fullname")),
+                        Gender = reader.GetString(reader.GetOrdinal("GenderType")),
+                        HouseUnit = reader.GetFieldValue<string>(reader.GetOrdinal("HouseUnit")),
+                        Email = reader.GetFieldValue<string>(reader.GetOrdinal("Email")),
+                        Mobile = reader.GetFieldValue<string>(reader.GetOrdinal("Mobile")),
+                        Profession = reader.GetFieldValue<string>(reader.GetOrdinal("Profession")),
+                        StatusType = reader.GetFieldValue<string>(reader.GetOrdinal("StatusType"))
+                };
                     forms.Add(form);
                 }
             }
             reader.Close();
-            string sqlQuery2 = "SELECT * FROM DBO.SPOUSE";
-
-            //associate @id with Id parameters
-            SqlCommand command2 = new SqlCommand(sqlQuery2, this.Connection);
-
-            command2.Parameters.Add("@Id", System.Data.SqlDbType.Int).Value = id;
-
-            SqlDataReader reader1 = command.ExecuteReader();
-
-            List<SpouseModel> spouseModels = new List<SpouseModel>();
-
-            if (reader1.HasRows)
-            {
-                while (reader1.Read())
-                {
-                    //create a new object for collection and return it to the list;
-                    SpouseModel spouse = new SpouseModel();
-                    spouse.FormId = reader1.GetInt32(reader1.GetOrdinal("FormId"));
-                    spouse.Names = reader1.GetString(reader1.GetOrdinal("Names"));
-                    spouse.Gender = reader1.GetString(reader1.GetOrdinal("GenderType"));
-                    spouse.Email = reader1.GetString(reader1.GetOrdinal("EmailAddress"));
-                    spouse.Number = reader1.GetString(reader1.GetOrdinal("Number"));
-
-                    spouseModels.Add(spouse);
-                }
-            }
-            foreach (var tenant in forms)
-            {
-                tenant.SpouseModels = spouseModels.Where(s => s.FormId == tenant.ID).ToList();
-            }
             return forms;
+        }
+        public List<SpouseModel> FetchAllSpouse(int newId)
+        {
+            List<SpouseModel> returnList = new List<SpouseModel>();
+
+            string sqlQuery = "select s.SpouseId,s.FormId,s.Names, g.GenderType,s.EmailAddress, s.Number from dbo.Spouse as s join dbo.Gender as g on s.GenderType = g.GenderId WHERE FormId = @FormId";
+            SqlCommand command = new SqlCommand(sqlQuery, this.Connection);
+            ////connection.Open();
+
+            command.Parameters.Add("@FormId", System.Data.SqlDbType.Int).Value = newId;
+
+            SqlDataReader reader = command.ExecuteReader();
+
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    SpouseModel spouse = new SpouseModel() {
+                        SpouseId = reader.GetInt32(reader.GetOrdinal("SpouseId")),
+                        FormId = reader.GetInt32(reader.GetOrdinal("FormId")),
+                        Names = reader.GetString(reader.GetOrdinal("Names")),
+                        GenderType = reader.GetString(reader.GetOrdinal("GenderType")),
+                        EmailAddress = reader.GetString(reader.GetOrdinal("EmailAddress")),
+                        Number = reader.GetString(reader.GetOrdinal("Number"))
+                    };
+                    returnList.Add(spouse);
+                }
+                reader.Close();
+            }
+            
+                return returnList;
         }
         public SpouseModel FetchSpouse(int id)
         {
-            string sqlQuery = "SELECT sp.SpouseId, sp.FormId, sp.Names, G.GenderType, sp.EmailAddress, sp.Number from dbo.Spouse as sp join dbo.Gender as G ON sp.Gendertype = G.GenderId WHERE FormId =@id;";
+            string sqlQuery = "SELECT sp.SpouseId, sp.FormId, sp.Names, G.GenderType, sp.EmailAddress, sp.Number from dbo.Spouse as sp join dbo.Gender as G ON sp.Gendertype = G.GenderId WHERE SpouseId =@SpouseId;";
             //associate @id with Id parameters
             SqlCommand command = new SqlCommand(sqlQuery, this.Connection);
 
-            command.Parameters.Add("@FormId", System.Data.SqlDbType.Int).Value = id;
+            command.Parameters.Add("@SpouseId", System.Data.SqlDbType.Int).Value = id;
 
             SqlDataReader reader = command.ExecuteReader();
 
@@ -160,10 +160,9 @@ namespace FormApplication.Data
                     form.SpouseId = reader.GetFieldValue<int>(reader.GetOrdinal("SpouseId"));
                     form.FormId = reader.GetFieldValue<int>(reader.GetOrdinal("FormId"));
                     form.Names = reader.GetFieldValue<string>(reader.GetOrdinal("Names"));
-                    form.Gender = reader.GetString(reader.GetOrdinal("GenderType"));
-                    form.Email = reader.GetFieldValue<string>(reader.GetOrdinal("EmailAddress"));
+                    form.GenderType = reader.GetString(reader.GetOrdinal("GenderType"));
+                    form.EmailAddress = reader.GetFieldValue<string>(reader.GetOrdinal("EmailAddress"));
                     form.Number = reader.GetFieldValue<string>(reader.GetOrdinal("Number"));
-
                 }
             }
             reader.Close();
@@ -240,6 +239,40 @@ namespace FormApplication.Data
             int newID = command.ExecuteNonQuery();
 
             return newID;
+        }
+        public int UpdateSpouse(SpouseModel spouseModel)
+        {
+            string sqlQuery = "";
+            //if spouseModel.id <=1 then Create into the spouse table
+            if(spouseModel.SpouseId <= 0)
+            {
+                //create
+                sqlQuery = "INSERT INTO dbo.Spouse Values(@SpouseId, @FormId, @Names, @GenderType, @EmailAddress, @Number)";
+            }
+            else
+            {
+                //update
+                sqlQuery = "UPDATE dbo.Spouse SET FormId = @FormId, Names = @Names, GenderType = @GenderType, EmailAddress = @EmailAddress, Number =@Number WHERE SpouseId = @SpouseId";
+            }
+            SqlCommand command = new SqlCommand(sqlQuery, this.Connection);
+
+            command.Parameters.Add("@SpouseId", System.Data.SqlDbType.Int, 1000).Value = spouseModel.SpouseId;
+            command.Parameters.Add("@FormId", System.Data.SqlDbType.Int, 1000).Value = spouseModel.FormId;
+            command.Parameters.Add("@Names", System.Data.SqlDbType.VarChar, 1000).Value = spouseModel.Names;
+            command.Parameters.Add("@GenderType", System.Data.SqlDbType.Int, 1000).Value = spouseModel.GenderType;
+            command.Parameters.Add("@EmailAddress", System.Data.SqlDbType.VarChar, 1000).Value = spouseModel.EmailAddress;
+            command.Parameters.Add("@Number", System.Data.SqlDbType.VarChar, 1000).Value = spouseModel.Number;
+
+            int newSpouseId = command.ExecuteNonQuery();
+
+            return newSpouseId;
+        }
+        public bool CheckForSpouse(int id)
+        {
+            if (id > 0)
+                return true;
+            else
+                return false;
         }
     public int CreateOccupants(FormCollection formCollection)
         {
@@ -359,8 +392,6 @@ namespace FormApplication.Data
 
         SqlCommand command = new SqlCommand(sqlQuery, this.Connection);
         SqlDataReader reader = command.ExecuteReader();
-        FormModel form = new FormModel();
-
         if (reader.HasRows)
         {
             while (reader.Read())
@@ -385,14 +416,16 @@ namespace FormApplication.Data
             while (reader.Read())
             {
                 //collect the types and add it to the list to return
-                StatutoryModel statuses = new StatutoryModel();
-                statuses.StatusId = reader.GetInt32(0);
-                statuses.StatusType = reader.GetString(1);
+                StatutoryModel statuses = new StatutoryModel() {
 
+                    StatusId = reader.GetInt32(reader.GetOrdinal("StatusId")),
+                    StatusType = reader.GetString(reader.GetOrdinal("StatusType"))
+                };
                 returnstatuses.Add(statuses);
             }
-        }reader.Close();
-        return returnstatuses;
+        }
+            reader.Close();
+            return returnstatuses;
     }
     public List<HousingModel> AccessHouseUnit()
     {
@@ -408,11 +441,11 @@ namespace FormApplication.Data
             while (reader.Read())
             {
                 //collect the address and add it to the list to return
-                HousingModel house = new HousingModel();
-                house.HouseId = reader.GetInt32(0);
-                house.HouseType = reader.GetString(1);
-                house.HouseUnit = reader.GetString(2);
-
+                HousingModel house = new HousingModel() {
+                    HouseId = reader.GetInt32(reader.GetOrdinal("HouseId")),
+                    HouseType = reader.GetString(reader.GetOrdinal("HouseType")),
+                    HouseUnit = reader.GetString(reader.GetOrdinal("HouseUnit"))
+                };
                 returnHouseUnit.Add(house);
             }
         }
@@ -433,22 +466,18 @@ namespace FormApplication.Data
         {
             while (reader.Read())
             {
-                //collect the address and add it to the list to return
-                GenderModel gender = new GenderModel();
-                gender.GenderId = reader.GetInt32(0);
-                gender.GenderType = reader.GetString(1);
-
-
+                    //collect the address and add it to the list to return
+                    GenderModel gender = new GenderModel()
+                    {
+                        GenderId = reader.GetInt32(reader.GetOrdinal("GenderId")),
+                        GenderType = reader.GetString(reader.GetOrdinal("GenderType"))
+                    };
                 returnGender.Add(gender);
             }
         }
             reader.Close();
             return returnGender;
     }
-<<<<<<< HEAD
-=======
-
->>>>>>> victorform
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)

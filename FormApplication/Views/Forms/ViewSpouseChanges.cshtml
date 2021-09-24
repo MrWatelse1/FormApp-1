@@ -1,0 +1,18 @@
+﻿@model FormApplication.Models.SpouseModel
+
+@{
+    ViewBag.Title = "ViewSpouseChanges";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>View Spouse Changes</h2>
+
+<div>
+    <h4>Edited Spouse Details </h4>
+    <p><b>Spouse Successfully Saved</b></p>
+ 
+</div>
+<p>
+    @Html.ActionLink("Edit", "EditSpouse", new { id = Model.SpouseId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
