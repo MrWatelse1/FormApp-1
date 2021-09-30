@@ -1,0 +1,19 @@
+﻿@model FormApplication.Models.OnlineModel
+
+@{
+    ViewBag.Title = "Saved";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2></h2>
+
+<div>
+    <h4>Success!!</h4>
+    <hr />
+    <h2>Hey There!</h2>
+    <p><h2>Your Form Has Been Updated Succesfully, Thanks.</h2></p>
+</div>
+<p>
+    @*@Html.ActionLink("Edit", "Edit", new { id = Model.ID }) |*@
+    @Html.ActionLink("Back to List", "Index")
+</p>

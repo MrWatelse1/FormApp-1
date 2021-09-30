@@ -21,43 +21,7 @@ namespace FormApplication.Controllers
             }
             return View("Index", fullFormModels);
         }
-        public ActionResult EditSpouse(int id)
-        {
-            //Edit a particular spouse
-            SpouseModel spouseModel = new SpouseModel();
-            using (FormDAO formDAO = new FormDAO())
-            {
-                List<StatutoryModel> statuses = formDAO.AccessStatusList();
-                List<GenderModel>  gender = formDAO.AccessGender();
-                List<HousingModel> houses = formDAO.AccessHouseUnit();
-                ViewBag.housebatch = houses;
-                ViewBag.status = statuses;
-                ViewBag.gender = gender;
 
-                spouseModel = formDAO.FetchSpouse(id);
-            }
-            return View("SpouseEdit",spouseModel);
-        }
-        public ActionResult ViewSpouse(FullFormModel fullFormModel)
-        {
-            
-            //View All Spouse(s)
-            List<SpouseModel> spouseModels = new List<SpouseModel>();
-            using(FormDAO formDAO = new FormDAO())
-            {
-                int newId = fullFormModel.ID;
-                if (formDAO.CheckForSpouse(fullFormModel.ID))
-                {
-                    spouseModels = formDAO.FetchAllSpouse(newId);
-
-                    return View("EditSpouse", spouseModels);
-                }
-                else
-                {
-                    return View("NoSpouse");
-                }
-            }
-        }
         public ActionResult FormCreate()
         {
             using (FormDAO formDAO = new FormDAO())
@@ -95,23 +59,9 @@ namespace FormApplication.Controllers
                 ViewBag.status = statuses;
                 ViewBag.gender = gender;
 
-                onlineModel = formDAO.FetchOne(id);
+                onlineModel = formDAO.FetchIndividualData(id);
             }
-            return View("OccupantView", onlineModel);
-        }
-        public ActionResult Create()
-        {
-            using (FormDAO formDAO = new FormDAO())
-            {
-
-                List<StatutoryModel> statuses = formDAO.AccessStatusList();
-                List<GenderModel> gender = formDAO.AccessGender();
-                List<HousingModel> houses = formDAO.AccessHouseUnit();
-                ViewBag.housebatch = houses;
-                ViewBag.status = statuses;
-                ViewBag.gender = gender;
-            }
-            return View("OnlineForm");
+            return View("FullView", onlineModel);
         }
         public ActionResult Delete(int id)
         {
@@ -143,24 +93,24 @@ namespace FormApplication.Controllers
             return View("ProcessNewForm");
         }
         [HttpPost]
-        public ActionResult SaveOccupantEdit(FullFormModel fullFormModel)
+        public ActionResult SaveAllEdits(FormCollection formCollection)
         {
-            //save to db
+            //save to the db
             using (FormDAO formDAO = new FormDAO())
             {
-                formDAO.UpdateOccupant(fullFormModel);
+                if(formCollection.Count <= 9)
+                {
+                    formDAO.SaveEditedOccupant(formCollection); 
+                }
+                else
+                {
+                    formDAO.SaveEditedOccupant(formCollection);
+                    formDAO.SaveEditedSpouses(formCollection);
+                    formDAO.CheckForNewSpouse(formCollection);
+                }
             }
-            return View("ViewOccupantChanges", fullFormModel);
+            return View("SaveAllEdits");
         }
-        [HttpPost]
-        public ActionResult SaveSpouseEdit(SpouseModel spouseModel)
-        {
-            //save to db
-            using(FormDAO formDAO = new FormDAO())
-            {
-                formDAO.UpdateSpouse(spouseModel);
-            }
-            return View("ViewSpouseChanges", spouseModel);
-        }
+
     }
 }

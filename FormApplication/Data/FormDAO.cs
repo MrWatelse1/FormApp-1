@@ -168,6 +168,66 @@ namespace FormApplication.Data
             reader.Close();
             return form;
         }
+        public FullFormModel FetchIndividualData(int id)
+        {
+
+            List<FullFormModel> returnList = new List<FullFormModel>();
+            string sqlQuery = "SELECT F.ID, F.Fullname, G.GenderType, H.HouseUnit, F.Email, F.Mobile, F.Profession, S.StatusType from dbo.FullForm as F join dbo.Gender as G ON F.Gender = G.GenderId join dbo.Housing as H ON F.HouseNumber = H.HouseId join dbo.Statutory as S ON F.Status = S.StatusId WHERE Id =@id";
+
+            //associate @id with Id Parameters
+
+            SqlCommand command = new SqlCommand(sqlQuery, this.Connection);
+
+            command.Parameters.Add("Id", System.Data.SqlDbType.Int).Value = id;
+
+            SqlDataReader reader = command.ExecuteReader();
+
+            FullFormModel form = new FullFormModel();
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    //create a new gadget object. Add it to the list to return.
+                    form.ID = reader.GetFieldValue<int>(reader.GetOrdinal("ID"));
+                    form.Fullname = reader.GetFieldValue<string>(reader.GetOrdinal("Fullname"));
+                    form.Gender = reader.GetString(reader.GetOrdinal("GenderType"));
+                    form.HouseNumber = reader.GetFieldValue<string>(reader.GetOrdinal("HouseUnit"));
+                    form.Email = reader.GetFieldValue<string>(reader.GetOrdinal("Email"));
+                    form.Mobile = reader.GetFieldValue<string>(reader.GetOrdinal("Mobile"));
+                    form.Profession = reader.GetFieldValue<string>(reader.GetOrdinal("Profession"));
+                    form.Status = reader.GetFieldValue<string>(reader.GetOrdinal("StatusType"));
+                }
+            }
+            reader.Close();
+
+            string sqlQuery2 = "select s.SpouseId, s.FormId,s.Names, g.GenderType,s.EmailAddress, s.Number from dbo.Spouse as s join dbo.Gender as g on s.GenderType = g.GenderId where FormId =@FormId";
+
+            SqlCommand command2 = new SqlCommand(sqlQuery2, this.Connection);
+            //connection.Open();
+
+            command2.Parameters.Add("FormId", System.Data.SqlDbType.Int).Value = id;
+
+            SqlDataReader reader2 = command2.ExecuteReader();
+            List<SpouseModel> spouseModels = new List<SpouseModel>();
+            if (reader2.HasRows)
+            {
+                while (reader2.Read())
+                {
+                    SpouseModel spouseModel = new SpouseModel()
+                    {
+                        SpouseId = reader2.GetInt32(reader2.GetOrdinal("SpouseId")),
+                        FormId = reader2.GetInt32(reader2.GetOrdinal("FormId")),
+                        Names = reader2.GetString(reader2.GetOrdinal("Names")),
+                        GenderType = reader2.GetString(reader2.GetOrdinal("GenderType")),
+                        EmailAddress = reader2.GetString(reader2.GetOrdinal("EmailAddress")),
+                        Number = reader2.GetString(reader2.GetOrdinal("Number"))
+                    };
+                    spouseModels.Add(spouseModel);
+                }
+            }
+            form.SpouseModels = spouseModels.Where(s => s.FormId == form.ID).ToList();
+            return form;
+        }
         public FullFormModel FetchOne(int id)
         {
             string sqlQuery = "SELECT F.ID, F.Fullname, G.GenderType, H.HouseUnit, F.Email, F.Mobile, F.Profession, S.StatusType from dbo.FullForm as F join dbo.Gender as G ON F.Gender = G.GenderId join dbo.Housing as H ON F.HouseNumber = H.HouseId join dbo.Statutory as S ON F.Status = S.StatusId WHERE Id =@id";
@@ -211,70 +271,15 @@ namespace FormApplication.Data
 
         return deletedID;
     }
-        public int UpdateOccupant(FullFormModel fullFormModel)
-        {
-            string sqlQuery = "";
-            //if fullFormModel.id <=1 1 then create
-            if (fullFormModel.ID <= 0)
-            {
-                sqlQuery = "INSERT INTO dbo.FullForm Values(@Fullname, @Gender, @HouseNumber, @Email, @Mobile, @Profession, @Status)";
-            }
-            else
-            {
-                //update
-                sqlQuery = "UPDATE dbo.FullForm SET Fullname = @Fullname,  Gender = @Gender, HouseNumber = @HouseNumber, Email = @Email, Mobile = @Mobile, Profession = @Profession, Status = @Status WHERE ID = @ID";
-            }
-            SqlCommand command = new SqlCommand(sqlQuery, this.Connection);
 
-            command.Parameters.Add("@ID", System.Data.SqlDbType.Int, 1000).Value = fullFormModel.ID;
-            command.Parameters.Add("@Fullname", System.Data.SqlDbType.VarChar, 1000).Value = fullFormModel.Fullname;
-            command.Parameters.Add("@Gender", System.Data.SqlDbType.Int, 1000).Value = fullFormModel.Gender;
-            command.Parameters.Add("@HouseNumber", System.Data.SqlDbType.Int, 1000).Value = fullFormModel.HouseNumber;
-            command.Parameters.Add("@Email", System.Data.SqlDbType.VarChar, 1000).Value = fullFormModel.Email;
-            command.Parameters.Add("@Mobile", System.Data.SqlDbType.VarChar, 1000).Value = fullFormModel.Mobile;
-            command.Parameters.Add("@Profession", System.Data.SqlDbType.VarChar, 1000).Value = fullFormModel.Profession;
-            command.Parameters.Add("@Status", System.Data.SqlDbType.Int, 1000).Value = fullFormModel.Status;
-
-
-            int newID = command.ExecuteNonQuery();
-
-            return newID;
-        }
-        public int UpdateSpouse(SpouseModel spouseModel)
-        {
-            string sqlQuery = "";
-            //if spouseModel.id <=1 then Create into the spouse table
-            if(spouseModel.SpouseId <= 0)
-            {
-                //create
-                sqlQuery = "INSERT INTO dbo.Spouse Values(@SpouseId, @FormId, @Names, @GenderType, @EmailAddress, @Number)";
-            }
-            else
-            {
-                //update
-                sqlQuery = "UPDATE dbo.Spouse SET FormId = @FormId, Names = @Names, GenderType = @GenderType, EmailAddress = @EmailAddress, Number =@Number WHERE SpouseId = @SpouseId";
-            }
-            SqlCommand command = new SqlCommand(sqlQuery, this.Connection);
-
-            command.Parameters.Add("@SpouseId", System.Data.SqlDbType.Int, 1000).Value = spouseModel.SpouseId;
-            command.Parameters.Add("@FormId", System.Data.SqlDbType.Int, 1000).Value = spouseModel.FormId;
-            command.Parameters.Add("@Names", System.Data.SqlDbType.VarChar, 1000).Value = spouseModel.Names;
-            command.Parameters.Add("@GenderType", System.Data.SqlDbType.Int, 1000).Value = spouseModel.GenderType;
-            command.Parameters.Add("@EmailAddress", System.Data.SqlDbType.VarChar, 1000).Value = spouseModel.EmailAddress;
-            command.Parameters.Add("@Number", System.Data.SqlDbType.VarChar, 1000).Value = spouseModel.Number;
-
-            int newSpouseId = command.ExecuteNonQuery();
-
-            return newSpouseId;
-        }
-        public bool CheckForSpouse(int id)
-        {
-            if (id > 0)
-                return true;
-            else
-                return false;
-        }
-    public int CreateOccupants(FormCollection formCollection)
+        //public bool CheckForSpouse(int id)
+        //{
+        //    if (id > 0)
+        //        return true;
+        //    else
+        //        return false;
+        //}
+        public int CreateOccupants(FormCollection formCollection)
         {
             string id = "-1";
             string name = formCollection["Fullname"];
@@ -312,7 +317,224 @@ namespace FormApplication.Data
             int newID = command.ExecuteNonQuery();
             return newID;
         }
-    public int CreateSpouses(FormCollection formCollection)
+        public int SaveEditedOccupant(FormCollection formCollection)
+        {
+            string id = formCollection["ID"];
+            string name = formCollection["Fullname"];
+            string gender = formCollection["Gender"];
+            string houseNumber = formCollection["HouseNumber"];
+            string email = formCollection["Email"];
+            string mobile = formCollection["Mobile"];
+            string profession = formCollection["Profession"];
+            string status = formCollection["Status"];
+
+            string sqlQuery = "";
+            // if fullmodel.id <= -1 then create
+            int mainId = int.Parse(id);
+
+            if (mainId <= 0)
+            {
+                sqlQuery = "INSERT INTO dbo.FullForm Values(@Fullname, @Gender, @HouseNumber, @Email, @Mobile, @Profession, @Status)";
+            }
+            else
+            {
+                sqlQuery = "UPDATE dbo.FullForm SET Fullname = @Fullname,  Gender = @Gender, HouseNumber = @HouseNumber, Email = @Email, Mobile = @Mobile, Profession = @Profession, Status = @Status WHERE ID = @ID";
+            }
+            SqlCommand command = new SqlCommand(sqlQuery, this.Connection);
+
+            command.Parameters.Add("@ID", System.Data.SqlDbType.Int, 1000).Value = mainId;
+            command.Parameters.Add("@Fullname", System.Data.SqlDbType.VarChar, 1000).Value = name;
+            command.Parameters.Add("@Gender", System.Data.SqlDbType.Int, 1000).Value = gender;
+            command.Parameters.Add("@HouseNumber", System.Data.SqlDbType.Int, 1000).Value = houseNumber;
+            command.Parameters.Add("@Email", System.Data.SqlDbType.VarChar, 1000).Value = email;
+            command.Parameters.Add("@Mobile", System.Data.SqlDbType.VarChar, 1000).Value = mobile;
+            command.Parameters.Add("@Profession", System.Data.SqlDbType.VarChar, 1000).Value = profession;
+            command.Parameters.Add("@Status", System.Data.SqlDbType.Int, 1000).Value = status;
+
+            //connection.Open();
+            int newID = command.ExecuteNonQuery();
+
+            return newID;
+        }
+        public int SaveEditedSpouses(FormCollection formCollection)
+        {
+           
+            string spouseID = formCollection["SpouseId"];
+
+            if (spouseID == null)
+            {
+                return 0;
+            }
+            else
+            {
+                string formID = formCollection["FormId"];
+                string names = formCollection["Names"];
+                string genders = formCollection["GenderType"];
+                string emailAdd = formCollection["EmailAddress"];
+                string number = formCollection["Number"];
+
+                string[] divSpouseId = spouseID.Split(',');
+                List<int> spouseIds = new List<int>();
+                foreach (string id in divSpouseId)
+                {
+                    int individualSpouseId = int.Parse(id);
+                    spouseIds.Add(individualSpouseId);
+                }
+
+                string[] divFormId = formID.Split(',');
+                List<int> formIds = new List<int>();
+                foreach (string id in divFormId)
+                {
+                    int individualFormId = int.Parse(id);
+                    formIds.Add(individualFormId);
+                }
+
+                string[] divNames = names.Split(',');
+                List<string> Naming = new List<string>();
+                foreach (string spouseName in divNames)
+                {
+                    Naming.Add(spouseName);
+                }
+
+                string[] divGenderTypes = genders.Split(',');
+                List<int> GenderTypes = new List<int>();
+                foreach (string spouseGender in divGenderTypes)
+                {
+                    int spouseGenders = int.Parse(spouseGender);
+                    GenderTypes.Add(spouseGenders);
+                }
+
+                string[] divEmails = emailAdd.Split(',');
+                List<string> Emails = new List<string>();
+                foreach (string spouseEmail in divEmails)
+                {
+                    Emails.Add(spouseEmail);
+                }
+
+                string[] divNumber = number.Split(',');
+                List<string> Numbers = new List<string>();
+                foreach (string spouseNumbers in divNumber)
+                {
+                    Numbers.Add(spouseNumbers);
+                }
+
+                string sqlQuery = "";
+                //if the spouseid <= -1 then create
+                int newID = 0;
+                for (int i = 0; i < spouseIds.Count; i++)
+                {
+                    if (spouseIds[i] <= 0)
+                    {
+                        sqlQuery = "INSERT INTO dbo.Spouse Values(@FormId, @Names, @GenderType, @EmailAddress, @Number)";
+                    }
+                    else
+                    {
+                        sqlQuery = "UPDATE dbo.Spouse SET FormId = @FormId, Names = @Names,  GenderType = @GenderType, EmailAddress = @EmailAddress, Number = @Number WHERE SpouseId = @SpouseId";
+                    }
+                    SqlCommand command = new SqlCommand(sqlQuery, this.Connection);
+                    command.Parameters.Add("@SpouseId", System.Data.SqlDbType.Int, 1000).Value = spouseIds[i];
+                    command.Parameters.Add("@FormId", System.Data.SqlDbType.Int, 1000).Value = formIds[i];
+                    command.Parameters.Add("@Names", System.Data.SqlDbType.VarChar, 1000).Value = Naming[i];
+                    command.Parameters.Add("@GenderType", System.Data.SqlDbType.Int, 1000).Value = GenderTypes[i];
+                    command.Parameters.Add("@EmailAddress", System.Data.SqlDbType.VarChar, 1000).Value = Emails[i];
+                    command.Parameters.Add("@Number", System.Data.SqlDbType.VarChar, 1000).Value = Numbers[i];
+
+                    newID = command.ExecuteNonQuery();
+
+                }
+                return newID;
+            }
+            
+        }
+        public int CheckForNewSpouse(FormCollection formCollection)
+        {
+            if (formCollection["SpouseName"] != null)
+            {
+                string foreignKey = formCollection["ID"];
+                string spousesId = formCollection["NewSpouseId"];
+                string spouseName = formCollection["SpouseName"];
+                string spouseGender = formCollection["SpouseGender"];
+                string spouseEmail = formCollection["SpouseEmail"];
+                string spouseNumber = formCollection["SpouseNumber"];
+
+                string[] spousesFormId = foreignKey.Split(',');
+                List<int> spouseFormIds = new List<int>();
+                foreach (string ids in spousesFormId)
+                {
+                    int individualFormId = int.Parse(ids);
+                    spouseFormIds.Add(individualFormId);
+                }
+
+                string[] divNewSpouse = spousesId.Split(',');
+                List<int> newSpouseId = new List<int>();
+                foreach(string id in divNewSpouse)
+                {
+                    int individualNewSpouseId = int.Parse(id);
+                    newSpouseId.Add(individualNewSpouseId);
+                }
+
+                string[] divNames = spouseName.Split(',');
+                List<string> SpouseNames = new List<string>();
+                foreach (string newSpouseName in divNames)
+                {
+                    SpouseNames.Add(newSpouseName);
+                }
+
+                string[] divGenderTypes = spouseGender.Split(',');
+                List<int> spouseGenderTypes = new List<int>();
+                foreach (string NewSpouseGender in divGenderTypes)
+                {
+                    int spousesGender = int.Parse(NewSpouseGender);
+                    spouseGenderTypes.Add(spousesGender);
+                }
+
+                string[] divEmailAddress = spouseEmail.Split(',');
+                List<string> spouseEmailAddress = new List<string>();
+                foreach (string spousesEmail in divEmailAddress)
+                {
+                    spouseEmailAddress.Add(spousesEmail);
+                }
+
+                string[] divNumbers = spouseNumber.Split(',');
+                List<string> spouseNumbers = new List<string>();
+                foreach (string spousesNumbers in divNumbers)
+                {
+                    spouseNumbers.Add(spousesNumbers);
+                }
+
+                string sqlQuery = "";
+                //if the spouseid <= -1 then create
+                int newID = 0;
+                for (int i = 0; i < newSpouseId.Count; i++)
+                {
+                    if (newSpouseId[i] <= 0)
+                    {
+                        sqlQuery = "INSERT INTO dbo.Spouse Values(@FormId, @Names, @GenderType, @EmailAddress, @Number)";
+                    }
+                    else
+                    {
+                        sqlQuery = "UPDATE dbo.Spouse SET FormId = @FormId, Names = @Names,  GenderType = @GenderType, EmailAddress = @EmailAddress, Number = @Number WHERE SpouseId = @SpouseId";
+                    }
+                    SqlCommand command = new SqlCommand(sqlQuery, this.Connection);
+                    command.Parameters.Add("@SpouseId", System.Data.SqlDbType.Int, 1000).Value = newSpouseId[i];
+                    command.Parameters.Add("@FormId", System.Data.SqlDbType.Int, 1000).Value = spouseFormIds[i];
+                    command.Parameters.Add("@Names", System.Data.SqlDbType.VarChar, 1000).Value = SpouseNames[i];
+                    command.Parameters.Add("@GenderType", System.Data.SqlDbType.Int, 1000).Value = spouseGenderTypes[i];
+                    command.Parameters.Add("@EmailAddress", System.Data.SqlDbType.VarChar, 1000).Value = spouseEmailAddress[i];
+                    command.Parameters.Add("@Number", System.Data.SqlDbType.VarChar, 1000).Value = spouseNumbers[i];
+
+                    newID = command.ExecuteNonQuery();
+
+                }
+                return newID;
+            }
+            else
+            {
+                return 0;
+            }
+
+        }
+        public int CreateSpouses(FormCollection formCollection)
         {
             int foreignKey = QueryFk();
             string spouseID = formCollection["SpouseId"];
@@ -321,7 +543,7 @@ namespace FormApplication.Data
             string emailAdd = formCollection["EmailAddress"];
             string number = formCollection["Number"];
 
-            var divSpouseId = spouseID.Split(',');
+            string[] divSpouseId = spouseID.Split(',');
             List<int> spouseIds = new List<int>();
             foreach (string id in divSpouseId)
             {
@@ -329,14 +551,14 @@ namespace FormApplication.Data
                 spouseIds.Add(individualSpouseId);
             }
 
-            var divNames = names.Split(',');
+            string[] divNames = names.Split(',');
             List<string> Naming = new List<string>();
             foreach (string spouseName in divNames)
             {
                 Naming.Add(spouseName);
             }
 
-            var divGenderTypes = genders.Split(',');
+            string[] divGenderTypes = genders.Split(',');
             List<int> GenderTypes = new List<int>();
             foreach (string spouseGender in divGenderTypes)
             {
@@ -344,14 +566,14 @@ namespace FormApplication.Data
                 GenderTypes.Add(spouseGenders);
             }
 
-            var divEmails = emailAdd.Split(',');
+            string[] divEmails = emailAdd.Split(',');
             List<string> Emails = new List<string>();
             foreach (string spouseEmail in divEmails)
             {
                 Emails.Add(spouseEmail);
             }
 
-            var divNumber = number.Split(',');
+            string[] divNumber = number.Split(',');
             List<string> Numbers = new List<string>();
             foreach (string spouseNumbers in divNumber)
             {
