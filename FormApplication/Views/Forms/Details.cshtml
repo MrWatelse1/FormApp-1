@@ -1,4 +1,4 @@
-﻿@model FormApplication.Models.FullFormModel
+﻿@model IEnumerable<FormApplication.Models.OnlineModel>
 
 @{
     ViewBag.Title = "Details";
@@ -7,69 +7,82 @@
 
 <h2>Details</h2>
 
-<div>
-    <h4>FullFormModel</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Fullname)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Fullname)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Gender)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Gender)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.HouseNumber)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.HouseNumber)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Email)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Email)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Mobile)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Mobile)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Profession)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Profession)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Status)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Status)
-        </dd>
-
-    </dl>
-</div>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.ID }) |
-    @Html.ActionLink("Back to List", "Index")
+    @Html.ActionLink("Create New", "Create")
 </p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Fullname)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Gender)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.HouseUnit)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Email)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Mobile)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Profession)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.StatusType)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.SpouseId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FormId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.SpouseName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.GenderType)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.EmailAddress)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Number)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Fullname)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Gender)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.HouseUnit)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Email)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Mobile)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Profession)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.StatusType)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.ID }) ||@*
+            @Html.ActionLink("Details", "Details", new { id=item.ID }) |*@
+            @Html.ActionLink("Delete", "Delete", new { id=item.ID })
+        </td>
+    </tr>
+}
+
+</table>

@@ -9,7 +9,7 @@
 <h2>All Occupants</h2>
 
 <p>
-    @Html.ActionLink("Create New", "Create")
+    @Html.ActionLink("Create New", "FormCreate")
 </p>
 <table class="table">
     <tr>
@@ -97,8 +97,8 @@
                 <tr>
                     <td>@spouseCount</td>
                     <td>@spouse.Names</td>
-                    <td>@spouse.Gender</td>
-                    <td>@spouse.Email</td>
+                    <td>@spouse.GenderType</td>
+                    <td>@spouse.EmailAddress</td>
                     <td>@spouse.Number</td>
                 </tr>
 
@@ -108,7 +108,6 @@
         </td>
         <td>
             @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
-            @Html.ActionLink("Details", "Details", new { id = item.ID }) |
             @Html.ActionLink("Delete", "Delete", new { id = item.ID })
         </td>
     </tr>

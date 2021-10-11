@@ -7,6 +7,7 @@ namespace FormApplication.Models
 {
     public class OnlineModel
     {
+        public int ID { get; set; }
         public string Fullname { get; set; }
         public string Gender { get; set; }
         public string HouseUnit { get; set; }
@@ -14,13 +15,11 @@ namespace FormApplication.Models
         public string Mobile { get; set; }
         public string Profession { get; set; }
         public string StatusType { get; set; }
-        public string SpouseName { get; set; }
-        public string GenderType { get; set; }
-        public string EmailAddress { get; set; }
-        public string Number { get; set; }
+        public List<SpouseModel> SpouseModels { get; set; }
 
-        public OnlineModel(string fullname, string gender, string houseUnit, string email, string mobile, string profession, string statusType, string spouseName, string genderType, string emailAddress, string number)
+        public OnlineModel(int id, string fullname, string gender, string houseUnit, string email, string mobile, string profession, string statusType, string spouseName, string genderType, string emailAddress, string number)
         {
+            ID = id;
             Fullname = fullname;
             Gender = gender;
             HouseUnit = houseUnit;
@@ -28,14 +27,11 @@ namespace FormApplication.Models
             Mobile = mobile;
             Profession = profession;
             StatusType = statusType;
-            SpouseName = spouseName;
-            GenderType = genderType;
-            EmailAddress = emailAddress;
-            Number = number;
         }
 
         public OnlineModel()
         {
+            ID = -1;
             Fullname = "Null";
             Gender = "Null";
             HouseUnit = "Null";
@@ -43,10 +39,6 @@ namespace FormApplication.Models
             Mobile = "Null";
             Profession = "Null";
             StatusType = "Null";
-            SpouseName = "Null";
-            GenderType = "Null";
-            EmailAddress = "Null";
-            Number = "Null";
         }
     }
 }
