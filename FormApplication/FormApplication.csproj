@@ -120,6 +120,7 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Models\OnlineModel.cs" />
     <Compile Include="Data\FormDAO.cs" />
     <Compile Include="Controllers\FormsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -171,11 +172,12 @@
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Forms\Index.cshtml" />
-    <Content Include="Views\Forms\OnlineForm.cshtml" />
-    <Content Include="Views\Forms\Details.cshtml" />
     <Content Include="Views\Forms\FormCreate.cshtml" />
-    <Content Include="Views\Forms\ViewDetails.cshtml" />
     <Content Include="Views\Forms\ProcessNewForm.cshtml" />
+    <Content Include="Views\Forms\Details.cshtml" />
+    <Content Include="Views\Forms\OccupantView.cshtml" />
+    <Content Include="Views\Forms\FullView.cshtml" />
+    <Content Include="Views\Forms\SaveAllEdits.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
