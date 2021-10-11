@@ -116,7 +116,7 @@ namespace FormApplication.Data
             reader.Close();
             return returnList;
 
-        }
+        }//not in use
     public FullFormModel FetchOne(int id)
     {
         string sqlQuery = "SELECT F.ID, F.Fullname, G.GenderType, H.HouseUnit, F.Email, F.Mobile, F.Profession, S.StatusType from dbo.FullForm as F join dbo.Gender as G ON F.Gender = G.GenderId join dbo.Housing as H ON F.HouseNumber = H.HouseId join dbo.Statutory as S ON F.Status = S.StatusId WHERE Id =@id";
@@ -148,6 +148,127 @@ namespace FormApplication.Data
             reader.Close();
             return form;
     }
+
+    public List<FullFormModel> SearchForName(string searchPhrase)
+        {
+            List<FullFormModel> returnList = new List<FullFormModel>();
+            string sqlQuery = "SELECT F.ID, F.Fullname, G.GenderType, H.HouseUnit, F.Email, F.Mobile, F.Profession, S.StatusType from dbo.FullForm " +
+                "as F join dbo.Gender as G ON F.Gender = G.GenderId join dbo.Housing as H ON F.HouseNumber = H.HouseId " +
+                "join dbo.Statutory as S ON F.Status = S.StatusId WHERE F.fullname LIKE @searchPhrase";
+            SqlCommand command = new SqlCommand(sqlQuery, this.Connection);
+            command.Parameters.Add("@searchPhrase", System.Data.SqlDbType.NVarChar).Value = "%" + searchPhrase + "%";
+            //connection.Open();
+            SqlDataReader reader = command.ExecuteReader();
+
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    //create a new gadget object. Add it to the list to return.
+                    FullFormModel form = new FullFormModel();
+                    form.ID = reader.GetInt32(0);
+                    form.Fullname = reader.GetString(1);
+                    form.Gender = reader.GetString(2);
+                    form.HouseNumber = reader.GetString(3);
+                    form.Email = reader.GetString(4);
+                    form.Mobile = reader.GetString(5);
+                    form.Profession = reader.GetString(6);
+                    form.Status = reader.GetString(7);
+
+                    returnList.Add(form);
+                }
+                reader.Close();
+                string sqlQuery2 = "select s.FormId,s.Names, g.GenderType,s.EmailAddress, s.Number from dbo.Spouse as s join dbo.Gender as g on s.GenderType = g.GenderId";
+
+                SqlCommand command2 = new SqlCommand(sqlQuery2, this.Connection);
+                //connection.Open();
+                SqlDataReader reader2 = command2.ExecuteReader();
+                List<SpouseModel> spouseModels = new List<SpouseModel>();
+                if (reader2.HasRows)
+                {
+                    while (reader2.Read())
+                    {
+                        SpouseModel spouse = new SpouseModel();
+                        spouse.FormId = reader2.GetInt32(0);
+                        spouse.Names = reader2.GetString(1);
+                        spouse.Gender = reader2.GetString(2);
+                        spouse.Email = reader2.GetString(3);
+                        spouse.Number = reader2.GetString(4);
+
+                        spouseModels.Add(spouse);
+                    }
+                }
+                foreach (var tenant in returnList)
+                {
+                    tenant.SpouseModels = spouseModels.Where(s => s.FormId == tenant.ID).ToList();
+                }
+
+
+            }
+            //reader.Close();
+            return returnList;
+        }
+
+    public List<FullFormModel> SearchHouseNumber(string searchHouseNo)
+        {
+            List<FullFormModel> returnList = new List<FullFormModel>();
+            string sqlQuery = "SELECT F.ID, F.Fullname, G.GenderType, H.HouseUnit, F.Email, F.Mobile, F.Profession, S.StatusType from dbo.FullForm " +
+                "as F join dbo.Gender as G ON F.Gender = G.GenderId join dbo.Housing as H ON F.HouseNumber = H.HouseId " +
+                "join dbo.Statutory as S ON F.Status = S.StatusId WHERE  H.HouseUnit LIKE @searchHouseNo";
+            SqlCommand command = new SqlCommand(sqlQuery, this.Connection);
+            command.Parameters.Add("@searchHouseNo", System.Data.SqlDbType.NVarChar).Value = "%" + searchHouseNo + "%";
+            //connection.Open();
+            SqlDataReader reader = command.ExecuteReader();
+
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    //create a new gadget object. Add it to the list to return.
+                    FullFormModel form = new FullFormModel();
+                    form.ID = reader.GetInt32(0);
+                    form.Fullname = reader.GetString(1);
+                    form.Gender = reader.GetString(2);
+                    form.HouseNumber = reader.GetString(3);
+                    form.Email = reader.GetString(4);
+                    form.Mobile = reader.GetString(5);
+                    form.Profession = reader.GetString(6);
+                    form.Status = reader.GetString(7);
+
+                    returnList.Add(form);
+                }
+                reader.Close();
+                string sqlQuery2 = "select s.FormId,s.Names, g.GenderType,s.EmailAddress, s.Number from dbo.Spouse as s join dbo.Gender as g on s.GenderType = g.GenderId";
+
+                SqlCommand command2 = new SqlCommand(sqlQuery2, this.Connection);
+                //connection.Open();
+                SqlDataReader reader2 = command2.ExecuteReader();
+                List<SpouseModel> spouseModels = new List<SpouseModel>();
+                if (reader2.HasRows)
+                {
+                    while (reader2.Read())
+                    {
+                        SpouseModel spouse = new SpouseModel();
+                        spouse.FormId = reader2.GetInt32(0);
+                        spouse.Names = reader2.GetString(1);
+                        spouse.Gender = reader2.GetString(2);
+                        spouse.Email = reader2.GetString(3);
+                        spouse.Number = reader2.GetString(4);
+
+                        spouseModels.Add(spouse);
+                    }
+                }
+                foreach (var tenant in returnList)
+                {
+                    tenant.SpouseModels = spouseModels.Where(s => s.FormId == tenant.ID).ToList();
+                }
+
+
+            }
+            //reader.Close();
+            return returnList;
+        }
+
     internal int Delete(int id)
     {
         string sqlQuery = "DELETE FROM dbo.FullForm WHERE Id = @Id ";
@@ -216,7 +337,7 @@ namespace FormApplication.Data
         int newID = command.ExecuteNonQuery();
         return newID;
     }//not in use
-        public int CreateOccupants(FormCollection formCollection)
+    public int CreateOccupants(FormCollection formCollection)
         {
             string id = "-1";
             string name = formCollection["Fullname"];

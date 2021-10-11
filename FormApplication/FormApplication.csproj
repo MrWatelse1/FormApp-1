@@ -178,6 +178,7 @@
     <Content Include="Views\Forms\ViewDetails.cshtml" />
     <Content Include="Views\Forms\ProcessNewForm.cshtml" />
     <Content Include="Views\Forms\FormView.cshtml" />
+    <Content Include="Views\Forms\SearchFor.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

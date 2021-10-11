@@ -142,6 +142,32 @@ namespace FormApplication.Controllers
             }
             return View("ViewDetails", form);
         }
+
+        public ActionResult SearchFor()
+        {
+            return View("SearchFor");
+        }
+        [HttpPost]
+        public ActionResult SearchForName(string searchPhrase)
+        {
+            List<FullFormModel> SearchResults = new List<FullFormModel>();
+            using (FormDAO formDAO = new FormDAO())
+            {
+               SearchResults = formDAO.SearchForName(searchPhrase);
+            }
+            return View("Index", SearchResults);
+        }
+
+        [HttpPost]
+        public ActionResult SearchHouseNumber(string searchHouseNo)
+        {
+            List<FullFormModel> SearchResults = new List<FullFormModel>();
+            using (FormDAO formDAO = new FormDAO())
+            {
+                SearchResults = formDAO.SearchHouseNumber(searchHouseNo);
+            }
+            return View("Index", SearchResults);
+        }
     }
 }
 

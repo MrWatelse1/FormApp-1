@@ -1,0 +1,63 @@
+﻿@model FormApplication.Models.FormModel
+
+@{
+    ViewBag.Title = "SearchFor";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Search Occupant</h2>
+
+@using (Html.BeginForm("SearchForName", "Forms", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            <label for="searchPhrase" class="control-label col-md-2"> Enter Occupant Name</label>
+            <div class="col-md-10">
+                <input type="text" name="searchPhrase" id="searchPhrase" class="form-control" />
+            </div>
+        </div>
+
+
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Search" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+
+@using (Html.BeginForm("SearchHouseNumber", "Forms", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            <label for="searchHouseNo" class="control-label col-md-2"> Enter House Number</label>
+            <div class="col-md-10">
+                <input type="text" name="searchHouseNo" id="searchHouseNo" class="form-control" />
+            </div>
+        </div>
+
+
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Search" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
